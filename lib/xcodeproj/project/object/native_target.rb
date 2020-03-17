@@ -548,13 +548,19 @@ module Xcodeproj
           end
         end
 
+        # Adds on demand resource files to the resources build phase of the target.
+        #
+        # @param  [Array<PBXFileReference>] resource_file_references
+        #         the files references of the resources to the target.
+        #
+        # @return [void]
+        #
         def add_on_demand_resources(resource_file_references)
           resource_file_references.each do |file|
             next if resources_build_phase.include?(file)
             build_file = project.new(PBXBuildFile)
             build_file.file_ref = file
-            old_settings = (build_file.settings ||= {})
-            build_file.settings = old_settings.merge({"ASSET_TAGS" => ["OnDemand"]})
+            build_file.settings = (build_file.settings ||= {}).merge({"ASSET_TAGS" => ["OnDemand"]})
             resources_build_phase.files << build_file
           end
         end
