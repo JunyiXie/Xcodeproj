@@ -548,6 +548,17 @@ module Xcodeproj
           end
         end
 
+        def add_on_demand_resources(resource_file_references)
+          resource_file_references.each do |file|
+            next if resources_build_phase.include?(file)
+            build_file = project.new(PBXBuildFile)
+            build_file.file_ref = file
+            old_settings = (build_file.settings ||= {})
+            build_file.settings = old_settings.merge({"ASSET_TAGS" => ["OnDemand"]})
+            resources_build_phase.files << build_file
+          end
+        end
+
         # Finds or creates the headers build phase of the target.
         #
         # @note   A target should have only one headers build phase.
